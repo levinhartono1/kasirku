@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KasirKu — POS System</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -952,8 +952,16 @@ sb.auth.onAuthStateChange(async (event, session) => {
 async function loadToko() {
   showLoading(true);
   try {
+    console.log('loadToko: fetching for user', S.user.id);
     const { data, error } = await sb.from('toko').select('*').eq('owner_id', S.user.id).maybeSingle();
+    console.log('loadToko result:', data, error);
     showLoading(false);
+    if (error) {
+      console.error('loadToko error:', error);
+      showToast('Error: ' + error.message);
+      showPage('setup', null);
+      return;
+    }
     if (data) {
       S.toko = data;
       document.getElementById('toko-nama-top').textContent = data.nama;
@@ -965,7 +973,7 @@ async function loadToko() {
   } catch(e) {
     showLoading(false);
     showPage('setup', null);
-    console.error('loadToko error:', e);
+    console.error('loadToko catch:', e);
   }
 }
 
