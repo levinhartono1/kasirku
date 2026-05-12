@@ -850,7 +850,14 @@ const SUPABASE_KEY = 'sb_publishable_0ZQdCE7RcWTpWRqGEU68Nw_JIh0JDxY';
 // ════════════════════════════════════════════════════
 
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
+  }
+});
 
 // ── STATE ─────────────────────────────────────────
 let S = {
