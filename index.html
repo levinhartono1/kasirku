@@ -944,16 +944,21 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
 async function loadToko() {
   showLoading(true);
-  const { data } = await sb.from('toko').select('*').eq('owner_id', S.user.id).single();
-  showLoading(false);
-  if (data) {
-    S.toko = data;
-    document.getElementById('toko-nama-top').textContent = data.nama;
-    showPage('pos', document.querySelector('.nav-tab'));
-    await loadAll();
-  } else {
-    // Tampilkan setup
+  try {
+    const { data, error } = await sb.from('toko').select('*').eq('owner_id', S.user.id).maybeSingle();
+    showLoading(false);
+    if (data) {
+      S.toko = data;
+      document.getElementById('toko-nama-top').textContent = data.nama;
+      showPage('pos', document.querySelector('.nav-tab'));
+      await loadAll();
+    } else {
+      showPage('setup', null);
+    }
+  } catch(e) {
+    showLoading(false);
     showPage('setup', null);
+    console.error('loadToko error:', e);
   }
 }
 
